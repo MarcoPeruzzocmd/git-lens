@@ -1,0 +1,77 @@
+/* =============================================================================
+   📁 ARQUIVO: frontend/src/styles/App.css
+   =============================================================================
+
+   ▸ O QUE É ESTE ARQUIVO?
+     CSS principal da aplicação. Define o visual de toda a interface.
+
+   ▸ QUAL A FUNÇÃO DELE NO PROJETO?
+     Estilizar todos os componentes: cores, espaçamentos, fontes, layout.
+     Sem ele, a página seria HTML cru sem nenhum visual.
+
+   ▸ O QUE PRECISO FAZER AQUI?
+
+     1. RESET/BASE:
+        - Resetar margens e paddings padrão do navegador
+        - Definir font-family (sugestão: Inter, Roboto, ou system-ui)
+        - Definir cor de fundo da página (tema escuro fica bonito para dev tools)
+        - Definir cor de texto padrão
+
+     2. LAYOUT GERAL:
+        - Container centralizado com max-width (ex: 1200px)
+        - Padding lateral para não colar nas bordas em mobile
+        - Header com título do projeto
+
+     3. FORMULÁRIO DE BUSCA:
+        - Input grande e chamativo para a URL
+        - Botão com cor de destaque
+        - Estilo de loading no botão (opacidade, cursor wait)
+
+     4. CARDS DE RESUMO:
+        - Grid com 3-4 cards lado a lado
+        - Cada card com fundo diferente, número grande, label pequeno
+        - Responsivo: empilhar em mobile
+
+     5. GRÁFICOS:
+        - Container com largura responsiva
+        - Fundo com borda arredondada (card style)
+
+     6. TABELA:
+        - Bordas sutis, hover nas linhas
+        - Cabeçalho com fundo diferente
+        - Responsivo: scroll horizontal em telas pequenas
+
+     7. LISTA DE COMMITS:
+        - Cada item como um card ou linha
+        - Badges coloridos para cada tipo:
+          .badge-feat     { background: #22c55e; }  (verde)
+          .badge-fix      { background: #ef4444; }  (vermelho)
+          .badge-refactor { background: #3b82f6; }  (azul)
+          .badge-docs     { background: #eab308; }  (amarelo)
+          .badge-style    { background: #a855f7; }  (roxo)
+          .badge-test     { background: #06b6d4; }  (ciano)
+          .badge-chore    { background: #6b7280; }  (cinza)
+          .badge-other    { background: #9ca3af; }  (cinza claro)
+
+     8. RESPONSIVIDADE:
+        - @media queries para tablet (768px) e mobile (480px)
+        - Grid de cards: 4 colunas → 2 colunas → 1 coluna
+        - Tabela: scroll horizontal em telas pequenas
+        - Gráfico: reduzir altura em mobile
+
+   ▸ CONCEITOS QUE PRECISO ESTUDAR:
+     - CSS Flexbox (display: flex, justify-content, align-items, gap)
+     - CSS Grid (display: grid, grid-template-columns, gap)
+     - Media queries para responsividade (@media)
+     - Variáveis CSS (--cor-primaria: #3b82f6;)
+     - Box model (margin, padding, border, box-sizing)
+     - Pseudo-classes (:hover, :focus, :disabled)
+     - Unidades relativas (rem, em, %, vh, vw)
+
+   ▸ DICA:
+     Comece com o layout mais feio possível que FUNCIONE.
+     Depois vá melhorando o visual aos poucos.
+     Não gaste horas no CSS antes da funcionalidade estar pronta.
+     Alternativa: usar Tailwind CSS (npm install tailwindcss) para
+     estilizar direto no JSX sem escrever CSS manual.
+   ============================================================================= */

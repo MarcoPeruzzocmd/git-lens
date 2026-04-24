@@ -1,11 +1,36 @@
-# Variáveis de ambiente
+# =============================================================================
+# 📁 ARQUIVO: .gitignore
+# =============================================================================
+#
+# ▸ O QUE É: Lista de arquivos/pastas que o Git deve IGNORAR.
+#   Tudo listado aqui NÃO será commitado nem enviado para o GitHub.
+#
+# ▸ POR QUE EXISTE:
+#   - Evitar commitar senhas e tokens (.env)
+#   - Evitar commitar dependências pesadas (node_modules — 500MB+)
+#   - Evitar commitar arquivos temporários do sistema
+
+# Variáveis de ambiente (contém senhas e tokens!)
 backend/.env
+.env
 
-# Dependências futuras
+# Dependências do Node.js (são instaladas com npm install)
 node_modules/
-vendor/
+frontend/node_modules/
 
-# Arquivos do sistema
+# Build do frontend (gerado com npm run build)
+frontend/dist/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Sistema operacional
 .DS_Store
 Thumbs.db
 
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo

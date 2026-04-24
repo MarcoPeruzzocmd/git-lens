@@ -1,0 +1,23 @@
+{
+  "_COMENTARIO_1": "=====================================================================",
+  "_COMENTARIO_2": "📁 ARQUIVO: frontend/package.json",
+  "_COMENTARIO_3": "=====================================================================",
+  "_COMENTARIO_4": "▸ O QUE É: Manifesto do projeto Node.js. Define nome, dependências e scripts.",
+  "_COMENTARIO_5": "▸ O QUE FAZER: Rodar 'npm create vite@latest . -- --template react' nesta pasta para gerar o projeto React com Vite. Isso vai preencher este arquivo automaticamente.",
+  "_COMENTARIO_6": "▸ DEPENDÊNCIAS QUE VOCÊ VAI PRECISAR INSTALAR DEPOIS:",
+  "_COMENTARIO_7": "  npm install axios        → Para fazer requisições HTTP ao backend",
+  "_COMENTARIO_8": "  npm install recharts      → Para gráficos de pizza/barra (ou chart.js)",
+  "_COMENTARIO_9": "  npm install react-router-dom → Para navegação entre páginas (opcional)",
+  "_COMENTARIO_10": "▸ CONCEITOS: npm, package.json, dependências, scripts, semver",
+  "_COMENTARIO_11": "=====================================================================",
+
+  "name": "git-lens-frontend",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "vite build",
+    "preview": "vite preview"
+  }
+}
