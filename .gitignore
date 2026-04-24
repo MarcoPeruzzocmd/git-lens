@@ -1,0 +1,11 @@
+# Variáveis de ambiente
+backend/.env
+
+# Dependências futuras
+node_modules/
+vendor/
+
+# Arquivos do sistema
+.DS_Store
+Thumbs.db
+
