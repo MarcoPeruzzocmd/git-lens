@@ -1,0 +1,36 @@
+services:
+  db:
+    container_name: mysql_gitlens
+    image: mysql:8.0
+    restart: always
+    ports:
+      - "3306:3306"
+    env_file: ./backend/.env
+    environment:
+      - MYSQL_ROOT_PASSWORD=${DB_PASS}
+      - MYSQL_DATABASE=${DB_NAME}
+      - MYSQL_USER=${DB_USER}
+      - MYSQL_PASSWORD=${DB_PASS}
+    volumes:
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  php:
+    container_name: php_gitlens
+    env_file: ./backend/.env
+    build: ./backend
+    ports:
+      - "80:80"
+    volumes:
+      - ./backend:/var/www/html
+
+  node:
+    container_name: node_gitlens
+    build: ./frontend
+    ports:
+      - "5173:5173"
+    working_dir: /app
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - HOST=0.0.0.0
