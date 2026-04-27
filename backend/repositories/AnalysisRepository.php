@@ -113,3 +113,48 @@
 //   - Chamar findAll() e ver se retorna os registros
 //   - Chamar findById() com um ID que existe e um que não existe (deve retornar null)
 // =============================================================================
+
+
+class AnalysisRepository
+{
+    private PDO $db;
+    public function __construct(){
+        $this->db = Database::getConnection();
+    }
+    public function save(string $owner, string $repo, array $stats, int $totalCommits, string $branch = 'main'){
+        $stmt = $this->db->prepare(
+            'INSERT INTO analyses (owner, repo, stats, total_commits, branch)
+                VALUES (:owner, :repo, :stats, :total, :branch)'
+        );
+        $statsJson = json_encode($stats, JSON_UNESCAPED_UNICODE);
+        $stmt->execute([
+              ':owner'  => $owner,
+              ':repo'   => $repo,
+              ':stats'  => $statsJson,
+              ':total'  => $totalCommits,
+              ':branch' => $branch,
+          ]);
+        return (int) $this->db->lastInsertId();
+
+    }
+    public function findAll(){
+        $stmt = $this->db->prepare(
+            'SELECT id, owner, repo, total_commits, branch, created_at FROM analyses
+            ORDER BY created_at DESC
+            LIMIT :limit'
+        );
+        $stmt->bindValue(':limit', 50, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+    public function findById($id){
+        $stmt = $this->db->prepare(
+            'SELECT * FROM analyses WHERE id = :id'
+        );
+         $stmt->execute([':id' => $id]);
+         $row = $stmt->fetch();
+         if (!$row) return null;
+         $row['stats'] = json_decode($row['stats'], true);
+         return $row;
+    }
+}

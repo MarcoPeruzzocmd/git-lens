@@ -77,6 +77,8 @@
 // =============================================================================
 
 // ⚠️  ECHO DE TESTE — remova quando começar a implementar o código de verdade
+header("Content-Type: application/json");
+
 require_once __DIR__ . '/config/Database.php';
 $envFile = __DIR__ . '/.env';
 if (file_exists($envFile)) {
@@ -105,4 +107,22 @@ $commits = $service->fetchCommits($parsed['owner'], $parsed['repo'], 'master');
 
 $analyzer = new CommitAnalyzerService();
 $stats = $analyzer->analyze($commits);
-echo json_encode($stats, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+
+// 3. Salvar no banco
+$repo = new AnalysisRepository();
+$id = $repo->save($parsed['owner'], $parsed['repo'], $stats, $stats['total_commits'], 'master');
+
+// echo json_encode([
+//     'id' => $id,
+//     'stats' => $stats
+// ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+
+$analysis = $repo->findById(1);
+$commits = $analysis['stats']['commits'];
+
+// Filtrar só os chore
+$chores = array_filter($commits, function ($commit) {
+    return $commit['type'] === 'chore';
+});
+echo json_encode($chores, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+

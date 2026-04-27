@@ -55,7 +55,8 @@ CREATE TABLE analyses (
     total_commits INT NOT NULL,
     branch VARCHAR(100) DEFAULT 'main',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-)
+);
+
 CREATE INDEX idx_analyses_owner_repo ON analyses(owner, repo);
 
 --
