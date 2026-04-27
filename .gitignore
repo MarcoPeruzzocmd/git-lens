@@ -14,6 +14,9 @@
 backend/.env
 .env
 
+# Override do Docker Compose — cada máquina tem o seu, não vai pro Git
+docker-compose.override.yml
+
 # Dependências do Node.js (são instaladas com npm install)
 node_modules/
 frontend/node_modules/

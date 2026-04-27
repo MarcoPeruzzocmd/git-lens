@@ -1,64 +1,42 @@
-# =============================================================================
-# 📁 ARQUIVO: docker-compose.yml
-# =============================================================================
-#
-# ▸ O QUE É ESTE ARQUIVO?
-#   É o "maestro" do Docker. Ele define e orquestra TODOS os containers
-#   (serviços) que o projeto precisa para funcionar.
-#
-# ▸ QUAL A FUNÇÃO DELE NO PROJETO?
-#   Com UM comando (docker-compose up), ele sobe 3 containers:
-#     1. db   → Banco de dados MySQL
-#     2. php  → Backend (Apache + PHP)
-#     3. node → Frontend (Vite + React)
-#
-# ▸ O QUE PRECISO FAZER AQUI?
-#   Definir 3 serviços dentro de "services:". Para cada um:
-#
-#   SERVIÇO "db" (MySQL):
-#     - image: mysql:8.0 (usar imagem oficial do MySQL 8)
-#     - ports: "3306:3306" (expor a porta do MySQL)
-#     - environment: definir MYSQL_ROOT_PASSWORD, MYSQL_DATABASE, MYSQL_USER, MYSQL_PASSWORD
-#       (usar as variáveis do .env)
-#     - volumes:
-#       - Montar o init.sql em /docker-entrypoint-initdb.d/ (executa na criação)
-#       - Volume nomeado para persistir dados (db_data:/var/lib/mysql)
-#
-#   SERVIÇO "php" (Backend):
-#     - build: ./backend (usar o Dockerfile do backend)
-#     - ports: "80:80" (Apache na porta 80)
-#     - volumes: montar ./backend em /var/www/html (hot reload dos arquivos PHP)
-#     - depends_on: db (esperar o MySQL subir antes)
-#     - env_file: ./backend/.env (carregar variáveis de ambiente)
-#
-#   SERVIÇO "node" (Frontend):
-#     - build: ./frontend (usar o Dockerfile do frontend)
-#     - ports: "5173:5173" (porta do Vite dev server)
-#     - volumes: montar ./frontend em /app (hot reload do React)
-#       IMPORTANTE: adicionar /app/node_modules como volume anônimo
-#       para não sobrescrever o node_modules do container
-#     - working_dir: /app
-#
-#   VOLUMES:
-#     Declarar o volume nomeado "db_data" no final do arquivo.
-#
-# ▸ CONCEITOS QUE PRECISO ESTUDAR:
-#   - Docker e Docker Compose (o que são, diferença entre eles)
-#   - Containers vs Máquinas Virtuais
-#   - docker-compose.yml (sintaxe YAML, services, volumes, ports)
-#   - Volumes no Docker (persistência de dados, bind mounts vs named volumes)
-#   - Networking no Docker (como containers se comunicam entre si)
-#   - depends_on (ordem de inicialização dos containers)
-#   - env_file e environment (variáveis de ambiente no Docker)
-#
-# ▸ COMANDOS ÚTEIS:
-#   docker-compose up --build     → Subir tudo (reconstruindo imagens)
-#   docker-compose down           → Derrubar tudo
-#   docker-compose down -v        → Derrubar tudo E apagar volumes (reset do banco)
-#   docker-compose logs -f php    → Ver logs do backend em tempo real
-#   docker-compose exec db mysql -u root -p  → Entrar no MySQL
-#
-# ▸ DICA:
-#   Se mudar o Dockerfile, precisa rodar com --build.
-#   Se mudar só código PHP ou React, o hot reload já pega automaticamente.
-# =============================================================================
+services:
+  db:
+    container_name: mysql_gitlens
+    image: mysql:8.0
+    restart: always
+    ports:
+      - "3306:3306"
+    env_file: ./backend/.env
+    environment:
+      - MYSQL_ROOT_PASSWORD=${DB_PASS}
+      - MYSQL_DATABASE=${DB_NAME}
+      - MYSQL_USER=${DB_USER}
+      - MYSQL_PASSWORD=${DB_PASS}
+    volumes:
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - db_data:/var/lib/mysql
+
+  php:
+    container_name: php_gitlens
+    build: ./backend
+    env_file: ./backend/.env
+    ports:
+      - "80:80"
+    volumes:
+      - ./backend:/var/www/html
+    depends_on:
+      - db
+
+  node:
+    container_name: node_gitlens
+    build: ./frontend
+    ports:
+      - "5173:5173"
+    working_dir: /app
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - HOST=0.0.0.0
+
+volumes:
+  db_data:

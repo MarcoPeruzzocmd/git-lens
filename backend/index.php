@@ -75,3 +75,10 @@
 //   3. Parte 5 (try/catch) — estrutura de erro
 //   4. Parte 4 (rotas) — precisa dos controllers existirem
 // =============================================================================
+
+// ⚠️  ECHO DE TESTE — remova quando começar a implementar o código de verdade
+header("Content-Type: application/json");
+echo json_encode([
+    "status"  => "ok",
+    "message" => "Backend funcionando!"
+]);

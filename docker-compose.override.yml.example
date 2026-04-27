@@ -1,0 +1,63 @@
+# =============================================================================
+# ARQUIVO: docker-compose.override.yml.example
+# =============================================================================
+#
+# Este arquivo serve para SOBRESCREVER configurações do docker-compose.yml
+# em máquinas com ambiente diferente (ex: Mac, Linux nativo, outra porta, etc.)
+#
+# COMO USAR:
+#   1. Copie este arquivo: cp docker-compose.override.yml.example docker-compose.override.yml
+#   2. Ajuste as configurações para o seu ambiente
+#   3. O Docker Compose lê o override automaticamente — não precisa de flag extra
+#
+# O docker-compose.override.yml está no .gitignore, então cada máquina
+# tem o seu sem afetar o repositório.
+#
+# EXEMPLOS DE USO:
+#
+# → Mudar porta do MySQL (se a 3306 já estiver ocupada):
+#
+# services:
+#   db:
+#     ports:
+#       - "3307:3306"
+#
+# → Mudar porta do frontend (se a 5173 já estiver ocupada):
+#
+# services:
+#   node:
+#     ports:
+#       - "3000:5173"
+#
+# → Usar env_file diferente (se o .env estiver em outro lugar):
+#
+# services:
+#   php:
+#     env_file: ./.env
+#
+# → Desabilitar o frontend (se quiser rodar só o backend):
+#
+# services:
+#   node:
+#     profiles:
+#       - frontend
+#
+# → Mac com Apple Silicon (M1/M2/M3) — forçar plataforma x86:
+#
+# services:
+#   db:
+#     platform: linux/amd64
+#   php:
+#     platform: linux/amd64
+#
+# =============================================================================
+
+# Descomente e ajuste o que precisar para a sua máquina:
+
+# services:
+#   db:
+#     ports:
+#       - "3307:3306"
+#   node:
+#     ports:
+#       - "3000:5173"
