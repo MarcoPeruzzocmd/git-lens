@@ -18,7 +18,7 @@
 //   1. MÉTODO: parseRepoUrl($url)
 //      - Recebe uma URL como "https://github.com/facebook/react"
 //      - Precisa extrair duas informações: o OWNER ("facebook") e o REPO ("react")
-//      - Usar regex ou explode para separar as partes da URL
+//      - Usar parse_url() + explode() para separar as partes da URL
 //      - Tratar variações: com .git no final, sem https://, só "user/repo"
 //      - Retornar um array com ['owner' => '...', 'repo' => '...']
 //      - Se a URL for inválida, lançar uma Exception com mensagem clara
@@ -67,7 +67,7 @@
 //   - APIs REST (o que é, como funciona GET, headers, status codes)
 //   - API do GitHub (autenticação, paginação, rate limits)
 //   - JSON no PHP (json_decode para transformar JSON em array)
-//   - Regex no PHP (preg_match) para parsear a URL do repositório
+//   - parse_url() do PHP para parsear URLs
 //   - Tratamento de erros com try/catch e Exception
 //   - O que é um Personal Access Token do GitHub e como gerar
 //
@@ -84,3 +84,122 @@
 //   - Sempre enviar o header User-Agent (a API do GitHub rejeita sem ele)
 //   - Tratar o erro 403 com mensagem amigável pedindo para configurar o token
 // =============================================================================
+
+class GitHubService
+{
+    // =========================================================================
+    // MÉTODO 1: Extrair owner e repo de uma URL do GitHub
+    // =========================================================================
+
+    public static function parseRepoUrl(string $url): array
+    {
+        // 1. Limpar a URL antes de parsear
+        $url = trim($url);
+        $url = rtrim($url, '/');
+        $url = str_replace('.git', '', $url);
+
+        // 2. Parsear a URL e extrair o path
+        $parsed = parse_url($url);
+
+        if (!$parsed || empty($parsed['path'])) {
+            throw new Exception("URL do repositório inválida", 400);
+        }
+
+        // 3. Limpar o path e quebrar em partes
+        $path = trim($parsed['path'], '/');
+        $parts = explode('/', $path);
+        $total = count($parts);
+
+        if ($total < 2) {
+            throw new Exception('URL inválida. Use: https://github.com/usuario/repositorio', 400);
+        }
+
+        // 4. Pegar owner e repo (os dois últimos pedaços)
+        $owner = $parts[$total - 2];
+        $repo = $parts[$total - 1];
+
+        if (empty($owner) || empty($repo)) {
+            throw new Exception('URL inválida. Use: https://github.com/usuario/repositorio', 400);
+        }
+
+        // 5. Retornar owner e repo
+        return ['owner' => $owner, 'repo' => $repo];
+    }
+
+    // =========================================================================
+    // MÉTODO 2: Buscar todos os commits de um repositório (com paginação)
+    // =========================================================================
+
+    public function fetchCommits(string $owner, string $repo, string $branch = 'main'): array
+    {
+        $allCommits = [];
+        $page = 1;
+
+        do {
+            // Montar a URL da API do GitHub para cada página
+            $url = "https://api.github.com/repos/$owner/$repo/commits?sha=$branch&per_page=100&page=$page";
+
+            // Fazer a requisição HTTP (método abaixo)
+            $response = $this->makeRequest($url);
+
+            // Juntar os commits desta página com os anteriores
+            $allCommits = array_merge($allCommits, $response);
+
+            $page++;
+
+            // Continuar enquanto a página veio cheia (100) e não passou do limite
+        } while (count($response) === 100 && $page <= 50);
+
+        return $allCommits;
+    }
+
+    // =========================================================================
+    // MÉTODO 3: Fazer requisição HTTP para a API do GitHub
+    // =========================================================================
+
+    private function makeRequest(string $url): array
+    {
+        $ch = curl_init();
+        $token = getenv('GITHUB_TOKEN');
+
+        curl_setopt_array($ch, [
+            CURLOPT_URL            => $url,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_TIMEOUT        => 30,
+            CURLOPT_HTTPHEADER     => [
+                'Accept: application/vnd.github.v3+json',
+                'User-Agent: GitLens-App',
+                $token ? "Authorization: Bearer $token" : '',
+            ],
+        ]);
+
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $error = curl_error($ch);
+        curl_close($ch);
+
+        if ($error) {
+            throw new Exception("Erro na requisição ao GitHub: $error", 502);
+        }
+
+        if ($httpCode === 404) {
+            throw new Exception('Repositório não encontrado. Verifique a URL.', 404);
+        }
+
+        if ($httpCode === 403) {
+            throw new Exception('Limite da API do GitHub atingido. Configure o GITHUB_TOKEN no .env.', 429);
+        }
+
+        if ($httpCode >= 400) {
+            throw new Exception("Erro na API do GitHub (HTTP $httpCode)", $httpCode);
+        }
+
+        $data = json_decode($response, true);
+
+        if (!is_array($data)) {
+            throw new Exception('Erro ao decodificar resposta da API do GitHub', 502);
+        }
+
+        return $data;
+    }
+}

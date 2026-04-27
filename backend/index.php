@@ -89,11 +89,10 @@ spl_autoload_register(function ($className) {
     }
 });
 
-header("Content-Type: application/json");
-echo json_encode([
-    "status"  => "ok",
-    "message" => "Backend funcionando!"
-]);
+$service = new GitHubService();
+$parsed = GitHubService::parseRepoUrl("https://github.com/MarcoPeruzzocmd/git-lens");
+$commits = $service->fetchCommits($parsed['owner'], $parsed['repo'], 'master');
+echo json_encode($commits['commits']);
 
 $db = Database::getConnection();
 echo json_encode(["db" => "conectado!"]);
