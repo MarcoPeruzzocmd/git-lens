@@ -77,8 +77,23 @@
 // =============================================================================
 
 // ⚠️  ECHO DE TESTE — remova quando começar a implementar o código de verdade
+require_once __DIR__ . '/config/Database.php';
+spl_autoload_register(function ($className) {
+    $dirs = ['config/', 'services/', 'controllers/', 'repositories/'];
+    foreach ($dirs as $dir) {
+        $file = __DIR__ . '/' . $dir . $className . '.php';
+        if (file_exists($file)) {
+            require_once $file;
+            return;
+        }
+    }
+});
+
 header("Content-Type: application/json");
 echo json_encode([
     "status"  => "ok",
     "message" => "Backend funcionando!"
 ]);
+
+$db = Database::getConnection();
+echo json_encode(["db" => "conectado!"]);
