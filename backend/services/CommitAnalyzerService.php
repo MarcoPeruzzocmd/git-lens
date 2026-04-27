@@ -99,6 +99,104 @@
 //       { "sha": "abc1234", "message": "feat: login", "author": "João", "type": "feat" }
 //     ]
 //   }
+class CommitAnalyzerService {
+    private const TYPES = [
+        'feat', 'fix', 'refactor', 'docs', 'style', 'test', 'chore', 'perf', 'ci', 'build', 'revert', 'other'
+    ];
+    private const KEYWORDS = [
+        'fix' => ['fix', 'bug', 'error'],
+        'feat' => ['feat', 'feature', 'add', 'new'],
+        'refactor' => ['refactor', 'rewrite', 'change'],
+        'docs' => ['doc', 'readme', 'docs', 'documentation'],
+        'style' => ['style', 'format', 'space', 'indent'],
+        'test' => ['test', 'unit', 'spec', 'assert'],
+        'chore' => ['chore', 'task', 'misc', 'config'],
+        'perf' => ['perf', 'performance', 'speed'],
+        'ci' => ['ci', 'github', 'action', 'deploy'],
+        'build' => ['build', 'npm', 'vite', 'webpack'],
+        'revert' => ['revert', 'undo']
+    ];
+    public function detectType($message) {
+        if (preg_match('/^(\w+)(\(.+?\))?!?:\s/', $message, $m)) {
+            $type = strtolower($m[1]);
+            foreach (self::TYPES as $validType) {
+                if ($validType === $type) {
+                    return $type;
+                }
+            }
+        }
+        $lower = strtolower($message);
+        foreach(self::KEYWORDS as $type => $keywords) {
+            foreach ($keywords as $keyword){
+                if (str_contains($lower, $keyword)){
+                    return $type;
+                }
+            }
+        }
+        return 'other';
+    }
+    public function analyze ($commits) {
+        $byAuthor = [];
+        $byType = [];
+        $detailed = [];
+        foreach ($commits as $commit) {
+            $message = $commit['commit']['message'];
+            $author = $commit['commit']['author']['name'];
+            $email= $commit['commit']['author']['email'];
+            $date = $commit['commit']['author']['date'];
+            $sha = $commit['sha'];
+            $type = $this->detectType($message);
+
+            // Agrupar por AUTOR
+            if (!isset($byAuthor[$author])) {
+                $byAuthor[$author] = [
+                    'email' => $email,
+                    'total' => 0,
+                    'types' => [],
+                ];
+            }
+            $byAuthor[$author]['total']++;
+
+            if (!isset($byAuthor[$author]['types'][$type])) {
+                $byAuthor[$author]['types'][$type] = ['count' => 0];
+            }
+            $byAuthor[$author]['types'][$type]['count']++;
+
+            // Agrupar por TIPO
+            if (!isset($byType[$type])) {
+                $byType[$type] = ['count' => 0];
+            }
+            $byType[$type]['count']++;
+
+            // Lista detalhada
+            $detailed[] = [
+                'sha'     => substr($sha, 0, 7),
+                'message' => $message,
+                'author'  => $author,
+                'date'    => $date,
+                'type'    => $type,
+            ];
+        }
+        $totalCommits = count($commits);
+        foreach($byAuthor as &$authorData) {
+            foreach ($authorData['types'] as $type => &$typeData){
+                $typeData['percentage'] = round(($typeData['count'] / $authorData['total']) * 100, 1
+            );
+            }
+        }
+        foreach ($byType as &$typeData) {
+            $typeData['percentage'] = round(($typeData['count'] / $totalCommits) * 100, 1
+        );
+        }
+        return [
+            'total_commits' => $totalCommits,
+            'by_author' => $byAuthor,
+            'by_type' => $byType,
+            'commits' => $detailed
+        ];
+        
+    }
+}
 //
 // ▸ CONCEITOS QUE PRECISO ESTUDAR:
 //   - Conventional Commits (https://www.conventionalcommits.org/pt-br)

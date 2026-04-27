@@ -78,6 +78,15 @@
 
 // ⚠️  ECHO DE TESTE — remova quando começar a implementar o código de verdade
 require_once __DIR__ . '/config/Database.php';
+$envFile = __DIR__ . '/.env';
+if (file_exists($envFile)) {
+    foreach (file($envFile) as $line) {
+        $line = trim($line);
+        if ($line && !str_starts_with($line, '#')) {
+            putenv($line);
+        }
+    }
+}
 spl_autoload_register(function ($className) {
     $dirs = ['config/', 'services/', 'controllers/', 'repositories/'];
     foreach ($dirs as $dir) {
@@ -92,7 +101,8 @@ spl_autoload_register(function ($className) {
 $service = new GitHubService();
 $parsed = GitHubService::parseRepoUrl("https://github.com/MarcoPeruzzocmd/git-lens");
 $commits = $service->fetchCommits($parsed['owner'], $parsed['repo'], 'master');
-echo json_encode($commits['commits']);
+// echo json_encode(count($commits));
 
-$db = Database::getConnection();
-echo json_encode(["db" => "conectado!"]);
+$analyzer = new CommitAnalyzerService();
+$stats = $analyzer->analyze($commits);
+echo json_encode($stats, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
