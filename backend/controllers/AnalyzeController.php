@@ -81,3 +81,28 @@
 //   métodos dos outros arquivos. Implemente os Services e Repository
 //   primeiro, depois este controller fica fácil.
 // =============================================================================
+class AnalyzeController{
+    private $GitHubService;
+    private $CommitAnalyzerService;
+    private $AnalysisRepository;
+
+    public function analyze(){
+        $url = $_GET['url'] ?? '';
+        $branch = $_COOKIE['branch'] ?? 'main';
+        if(empty($url)){
+            throw new Exception("URL do repositório é obrigatória.", 400);
+        }
+        $repoData = $this->GitHubService->parseRepoUrl($url);
+        $commits = $this->GitHubService->fetchCommits($repoData['owner'], $repoData['repo'], $branch);
+        $analysis = $this->CommitAnalyzerService->analyze($commits);
+        $this->AnalysisRepository->save($repoData['owner'], $repoData['repo'], $analysis['stats'], $analysis['total'], $branch);
+        echo json_encode(['success' => true, 'data' => $analysis]);
+    }
+    public function history(){
+       $indexHistory = $this->AnalysisRepository->findAll();
+       if (!$indexHistory) {
+        return json_encode(['erro' => false, 'message' => 'Nenhuma análise encontrada.']);
+       }
+       echo json_encode(['success' => true, 'data' => $indexHistory]);
+    }
+}
