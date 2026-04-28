@@ -1,42 +1,6 @@
-# =============================================================================
-# 📁 ARQUIVO: backend/.htaccess
-# =============================================================================
-#
-# ▸ O QUE É ESTE ARQUIVO?
-#   É um arquivo de configuração do Apache (o servidor web que roda o PHP).
-#   Ele fica na pasta do projeto e o Apache lê automaticamente.
-#
-# ▸ QUAL A FUNÇÃO DELE NO PROJETO?
-#   Redirecionar TODAS as requisições para o index.php.
-#   Sem ele, se alguém acessar /api/analyze, o Apache vai procurar uma
-#   pasta chamada "api" com um arquivo "analyze" dentro — e não vai achar.
-#   Com o .htaccess, o Apache manda tudo pro index.php e deixa ELE decidir
-#   o que fazer com a URL.
-#
-# ▸ O QUE PRECISO FAZER AQUI?
-#   Escrever 3 regras de rewrite do Apache:
-#
-#   1. Ligar o motor de rewrite:
-#      RewriteEngine On
-#
-#   2. Condições: só redirecionar se NÃO for um arquivo ou pasta real
-#      RewriteCond %{REQUEST_FILENAME} !-f    (não é um arquivo)
-#      RewriteCond %{REQUEST_FILENAME} !-d    (não é uma pasta)
-#
-#   3. Regra: redirecionar tudo para index.php passando a URL como parâmetro
-#      RewriteRule ^(.*)$ index.php?route=$1 [QSA,L]
-#      Explicação das flags:
-#        QSA = Query String Append (mantém os parâmetros originais da URL)
-#        L   = Last (para de processar regras depois dessa)
-#
-# ▸ CONCEITOS QUE PRECISO ESTUDAR:
-#   - O que é o Apache e como ele serve arquivos PHP
-#   - mod_rewrite do Apache (o módulo que permite reescrever URLs)
-#   - Sintaxe do .htaccess (RewriteEngine, RewriteCond, RewriteRule)
-#   - O que são flags de RewriteRule (QSA, L, R, NC)
-#   - Diferença entre URL amigável e query string
-#
-# ▸ DICA:
-#   O Dockerfile precisa habilitar o mod_rewrite com: a2enmod rewrite
-#   Sem isso, o Apache ignora este arquivo completamente.
-# =============================================================================
+RewriteEngine On
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+RewriteRule ^(.*)$ index.php [QSA,L]

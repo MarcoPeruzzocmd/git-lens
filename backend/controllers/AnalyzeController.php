@@ -86,16 +86,21 @@ class AnalyzeController{
     private $CommitAnalyzerService;
     private $AnalysisRepository;
 
+    public function __construct(){
+    $this->GitHubService = new GitHubService();
+    $this->CommitAnalyzerService = new CommitAnalyzerService();
+    $this->AnalysisRepository = new AnalysisRepository();
+}
     public function analyze(){
         $url = $_GET['url'] ?? '';
-        $branch = $_COOKIE['branch'] ?? 'main';
+        $branch = $_GET['branch'] ?? 'main';
         if(empty($url)){
             throw new Exception("URL do repositório é obrigatória.", 400);
         }
-        $repoData = $this->GitHubService->parseRepoUrl($url);
+        $repoData = GitHubService::parseRepoUrl($url);
         $commits = $this->GitHubService->fetchCommits($repoData['owner'], $repoData['repo'], $branch);
         $analysis = $this->CommitAnalyzerService->analyze($commits);
-        $this->AnalysisRepository->save($repoData['owner'], $repoData['repo'], $analysis['stats'], $analysis['total'], $branch);
+        $this->AnalysisRepository->save($repoData['owner'], $repoData['repo'], $analysis, $analysis['total_commits'], $branch);
         echo json_encode(['success' => true, 'data' => $analysis]);
     }
     public function history(){
@@ -104,5 +109,12 @@ class AnalyzeController{
         return json_encode(['erro' => false, 'message' => 'Nenhuma análise encontrada.']);
        }
        echo json_encode(['success' => true, 'data' => $indexHistory]);
+    }
+    public function show($id){
+        $analysis = $this->AnalysisRepository->findById($id);
+        if (!$analysis) {
+            throw new Exception("Análise não encontrada.", 404);
+        }
+        echo json_encode(['success' => true, 'data' => $analysis]);
     }
 }
