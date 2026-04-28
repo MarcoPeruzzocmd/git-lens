@@ -77,18 +77,17 @@
 // =============================================================================
 
 // ⚠️  ECHO DE TESTE — remova quando começar a implementar o código de verdade
-header("Content-Type: application/json");
+require_once __DIR__ . '/config/env.php';
+header('Content-Type: application/json');
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: GET, POST');
+header('Access-Control-Allow-Headers: Content-Type');
 
-require_once __DIR__ . '/config/Database.php';
-$envFile = __DIR__ . '/.env';
-if (file_exists($envFile)) {
-    foreach (file($envFile) as $line) {
-        $line = trim($line);
-        if ($line && !str_starts_with($line, '#')) {
-            putenv($line);
-        }
-    }
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit();
 }
+
 spl_autoload_register(function ($className) {
     $dirs = ['config/', 'services/', 'controllers/', 'repositories/'];
     foreach ($dirs as $dir) {
@@ -100,29 +99,33 @@ spl_autoload_register(function ($className) {
     }
 });
 
-$service = new GitHubService();
-$parsed = GitHubService::parseRepoUrl("https://github.com/MarcoPeruzzocmd/git-lens");
-$commits = $service->fetchCommits($parsed['owner'], $parsed['repo'], 'master');
-// echo json_encode(count($commits));
+$uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+$segments = explode('/', trim($uri, '/'));
+$resource = strtolower($segments[0] ?? null);
+$code = $segments[1] ?? null;
+$method = $_SERVER['REQUEST_METHOD'];
 
-$analyzer = new CommitAnalyzerService();
-$stats = $analyzer->analyze($commits);
+try {
+    switch ($resource) {
+        case 'analyze':
+            require_once __DIR__ . '/routes/analyze.php';
+            break;
 
-// 3. Salvar no banco
-$repo = new AnalysisRepository();
-$id = $repo->save($parsed['owner'], $parsed['repo'], $stats, $stats['total_commits'], 'master');
+        case 'history':
+            require_once __DIR__ . '/routes/history.php';
+            break;
 
-// echo json_encode([
-//     'id' => $id,
-//     'stats' => $stats
-// ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
-
-$analysis = $repo->findById(1);
-$commits = $analysis['stats']['commits'];
-
-// Filtrar só os chore
-$chores = array_filter($commits, function ($commit) {
-    return $commit['type'] === 'chore';
-});
-echo json_encode($chores, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
-
+        default:
+            http_response_code(404);
+            echo json_encode(['error' => 'Rota não encontrada']);
+            break;
+    }
+} catch (Exception $e) {
+    $code = $e->getCode() ?: 500;
+    http_response_code($code);
+    echo json_encode([
+        'error' => true,
+        'message' => $e->getMessage(),
+        'code' => $code
+    ]);
+}
