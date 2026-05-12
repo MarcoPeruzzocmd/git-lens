@@ -1,10 +1,8 @@
+import SearchForm from './components/SearchForm'
+import './styles/App.css'
+
 function App() {
-  return (
-    <div>
-      <h1>GitLens - Análise de Commits</h1>
-      <p>Frontend funcionando!</p>
-    </div>
-  )
+  return <SearchForm />
 }
 
 export default App
