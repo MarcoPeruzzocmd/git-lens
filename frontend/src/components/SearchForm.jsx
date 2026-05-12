@@ -5,13 +5,16 @@
 // A lógica (useState, handleSubmit, chamada à API) será implementada depois.
 // =============================================================================
 
+import '../styles/SearchForm.css'
+import InfoCommit from './InfoCommit'
+
 function SearchForm() {
   return (
     <div className="home">
 
       {/* Logo */}
       <div className="logo-box">
-        <img src="logo-gitLens.png" alt="" className="logo-icon"/>
+        <img src="logo-gitLens.png" alt="GitLens" className="logo-icon" />
       </div>
 
       {/* Badge */}
@@ -29,7 +32,6 @@ function SearchForm() {
       </p>
 
       {/* Input + Botões */}
-      
       <div className="search-box">
         <div className="search-input-wrapper">
           <span className="search-icon">⎇</span>
@@ -49,6 +51,12 @@ function SearchForm() {
       <p className="search-hint">
         Repositórios públicos · até 300 commits mais recentes · arquivo JSON ou git log
       </p>
+
+      {/* Cards de tipos de commit */}
+      <InfoCommit />
+
+      {/* Footer */}
+      <p className="footer-text">Built with Conventional Commits spec</p>
 
     </div>
   )
