@@ -1,3 +1,28 @@
+const API_BASE = 'http://localhost'
+export async function analyzeRepo(url, branch = 'main') {
+    const response = await fetch(`${API_BASE}/analyze?url=${encodeURIComponent(url)}&branch=${branch}`)
+    const data = await response.json()
+
+    if (!response.ok) {
+        throw new Error(data.message || 'Erro ao analisar repositório')
+    }
+    return data
+}
+
+export async function getHistory(){
+    const response = await fetch(`${API_BASE}/history`)
+    return response.json()
+}
+
+export async function getAnalysis(id) {
+    const response = await fetch(`${API_BASE}/history/${id}`)
+    return response.json()
+}
+
+
+
+
+
 // =============================================================================
 // 📁 ARQUIVO: frontend/src/services/api.js
 // =============================================================================
