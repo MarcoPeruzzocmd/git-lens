@@ -139,23 +139,16 @@ class GitHubService
             // Montar a URL da API do GitHub para cada página
             $url = "https://api.github.com/repos/$owner/$repo/commits?sha=$branch&per_page=100&page=$page";
 
-            // Fazer a requisição HTTP (método abaixo)
             $response = $this->makeRequest($url);
 
-            // Juntar os commits desta página com os anteriores
             $allCommits = array_merge($allCommits, $response);
 
             $page++;
 
-            // Continuar enquanto a página veio cheia (100) e não passou do limite
         } while (count($response) === 100 && $page <= 50);
 
         return $allCommits;
     }
-
-    // =========================================================================
-    // MÉTODO 3: Fazer requisição HTTP para a API do GitHub
-    // =========================================================================
 
     private function makeRequest(string $url): array
     {

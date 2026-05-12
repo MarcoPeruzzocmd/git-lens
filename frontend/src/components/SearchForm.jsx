@@ -1,14 +1,10 @@
-// =============================================================================
-// 📁 ARQUIVO: frontend/src/components/SearchForm.jsx
-// =============================================================================
-// Componente visual da página inicial — formulário de busca do repositório.
-// A lógica (useState, handleSubmit, chamada à API) será implementada depois.
-// =============================================================================
-
 import '../styles/SearchForm.css'
 import InfoCommit from './InfoCommit'
+import {useState} from 'react'
 
 function SearchForm() {
+    const [url, setUrl] = useState('')
+    const [branch, setBranch] = useState('main')
   return (
     <div className="home">
 
