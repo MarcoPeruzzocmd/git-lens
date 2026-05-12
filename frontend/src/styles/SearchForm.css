@@ -103,7 +103,6 @@
   color: #484f58;
 }
 
-/* Botões */
 .btn-analyze {
   background: #6366f1;
   color: #ffffff;
@@ -113,49 +112,26 @@
   font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
-  white-space: nowrap;
   transition: background 0.2s;
+  margin-right: 5px;
 }
 
 .btn-analyze:hover {
   background: #4f46e5;
 }
 
-.btn-upload {
-  background: transparent;
-  color: #e6edf3;
-  border: 1px solid #30363d;
-  border-radius: 8px;
-  padding: 0.6rem 1rem;
-  font-size: 0.9rem;
-  font-weight: 500;
-  cursor: pointer;
-  white-space: nowrap;
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  transition: border-color 0.2s;
-}
-
-.btn-upload:hover {
-  border-color: #6366f1;
-}
-
-/* Hint */
 .search-hint {
   font-size: 0.78rem;
   color: #484f58;
   margin-bottom: 3rem;
 }
 
-/* Footer */
 .footer-text {
   font-size: 0.78rem;
   color: #484f58;
   margin-top: 2rem;
 }
 
-/* Responsivo */
 @media (max-width: 600px) {
   .search-box {
     flex-direction: column;

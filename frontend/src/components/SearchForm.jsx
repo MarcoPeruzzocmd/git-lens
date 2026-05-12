@@ -42,9 +42,6 @@ function SearchForm() {
           />
         </div>
         <button className="btn-analyze">Analisar</button>
-        <button className="btn-upload">
-          <span>↑</span> Upload
-        </button>
       </div>
 
       {/* Hint */}
