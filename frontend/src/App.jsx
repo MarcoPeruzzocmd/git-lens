@@ -1,3 +1,14 @@
+function App() {
+  return (
+    <div>
+      <h1>GitLens - Análise de Commits</h1>
+      <p>Frontend funcionando!</p>
+    </div>
+  )
+}
+
+export default App
+
 // =============================================================================
 // 📁 ARQUIVO: frontend/src/App.jsx
 // =============================================================================
@@ -63,3 +74,4 @@
 //   Comece simples: só o formulário + um console.log dos dados.
 //   Depois vá adicionando os componentes visuais um por um.
 // =============================================================================
+

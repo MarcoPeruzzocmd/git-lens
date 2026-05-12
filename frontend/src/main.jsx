@@ -1,3 +1,12 @@
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import App from './App'
+
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+)
 // =============================================================================
 // 📁 ARQUIVO: frontend/src/main.jsx
 // =============================================================================
@@ -26,3 +35,4 @@
 //   Este arquivo quase nunca muda. É gerado pelo Vite e você só mexe
 //   se precisar adicionar um Provider global (ex: React Router, Context).
 // =============================================================================
+
