@@ -136,7 +136,6 @@ class GitHubService
         $page = 1;
 
         do {
-            // Montar a URL da API do GitHub para cada página
             $url = "https://api.github.com/repos/$owner/$repo/commits?sha=$branch&per_page=100&page=$page";
 
             $response = $this->makeRequest($url);
@@ -149,7 +148,12 @@ class GitHubService
 
         return $allCommits;
     }
-
+    public function fetchBranches (string $owner, string $repo): array
+    {
+        $url = "https://api.github.com/repos/$owner/$repo/branches?per_page=100";
+        $response = $this->makeRequest($url);
+        return array_column($response, 'name');
+    }
     private function makeRequest(string $url): array
     {
         $ch = curl_init();

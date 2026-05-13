@@ -2,13 +2,13 @@ import { useState } from 'react'
 import { Input } from './ui/input'
 import { Button } from './ui/button'
 import { BranchCombobox } from './ui/combobox'
+import { analyzeRepo, getBranches } from '../services/api'
 import InfoCommit from './InfoCommit'
-
-const BRANCH_OPTIONS = ['main', 'master', 'develop', 'staging', 'production']
 
 function SearchForm({ onSubmit, loading }) {
   const [url, setUrl] = useState('')
   const [branch, setBranch] = useState('')
+  const [branches, setBranches] = useState(['main', 'master', 'develop', 'staging', 'production'])
 
   function handleSubmit(event) {
     event.preventDefault()
@@ -17,6 +17,16 @@ function SearchForm({ onSubmit, loading }) {
     }
     onSubmit(url, branch)
   }
+  async function handlerUrlBlur(){
+  if(!url) return
+  try{
+    const result = await getBranches(url)
+    console.log('branches recebidas:', result) 
+    setBranches(result)
+  } catch(e){
+   console.error('erro')
+  }
+}
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen text-center px-8 py-8">
@@ -52,12 +62,13 @@ function SearchForm({ onSubmit, loading }) {
           placeholder="https://github.com/owner/repo"
           value={url}
           onChange={(e) => setUrl(e.target.value)}
+          onBlur = {handlerUrlBlur}
           style={{ fontFamily: "'Science Gothic', sans-serif" }}
         />
         <BranchCombobox
           value={branch}
           onChange={setBranch}
-          options={BRANCH_OPTIONS}
+          options={branches}
         />
         <Button type="submit" disabled={loading} className="shrink-0 mr-1">
           {loading ? 'Analisando...' : 'Analisar'}

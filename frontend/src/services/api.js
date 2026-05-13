@@ -19,6 +19,15 @@ export async function getAnalysis(id) {
     return response.json()
 }
 
+export async function getBranches(url) {
+    const response = await fetch(`${API_BASE}/branches?url=${encodeURIComponent(url)}`)
+    const data = await response.json()
+    return data.branches
+}
+
+
+
+
 
 
 

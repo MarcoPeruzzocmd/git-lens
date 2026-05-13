@@ -114,6 +114,9 @@ try {
         case 'history':
             require_once __DIR__ . '/routes/history.php';
             break;
+        case 'branches':
+            require_once __DIR__ . '/routes/branches.php';
+            break;
 
         default:
             http_response_code(404);
