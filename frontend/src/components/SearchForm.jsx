@@ -1,14 +1,14 @@
 import { useState } from 'react'
-import { GitBranch, ChevronDown } from 'lucide-react'
 import { Input } from './ui/input'
 import { Button } from './ui/button'
+import { BranchCombobox } from './ui/combobox'
 import InfoCommit from './InfoCommit'
 
 const BRANCH_OPTIONS = ['main', 'master', 'develop', 'staging', 'production']
 
 function SearchForm({ onSubmit, loading }) {
   const [url, setUrl] = useState('')
-  const [branch, setBranch] = useState('main')
+  const [branch, setBranch] = useState('')
 
   function handleSubmit(event) {
     event.preventDefault()
@@ -52,24 +52,13 @@ function SearchForm({ onSubmit, loading }) {
           placeholder="https://github.com/owner/repo"
           value={url}
           onChange={(e) => setUrl(e.target.value)}
-          className="font-gothic"
           style={{ fontFamily: "'Science Gothic', sans-serif" }}
         />
-        {/* Select de Branch */}
-        <div className="relative shrink-0 group">
-          <GitBranch size={14} className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-subtle group-hover:text-foreground transition-colors" />
-          <select
-            value={branch}
-            onChange={(e) => setBranch(e.target.value)}
-            className="appearance-none bg-transparent border border-border text-subtle text-sm rounded-md pl-7 pr-6 py-1.5 focus:outline-none focus:border-primary focus:text-foreground transition-colors cursor-pointer hover:border-primary/60 hover:text-foreground"
-          >
-            {BRANCH_OPTIONS.map((b) => (
-              <option key={b} value={b} className="bg-surface text-foreground">{b}</option>
-            ))}
-          </select>
-          <ChevronDown size={12} className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-subtle group-hover:text-foreground transition-colors" />
-        </div>
-
+        <BranchCombobox
+          value={branch}
+          onChange={setBranch}
+          options={BRANCH_OPTIONS}
+        />
         <Button type="submit" disabled={loading} className="shrink-0 mr-1">
           {loading ? 'Analisando...' : 'Analisar'}
         </Button>
