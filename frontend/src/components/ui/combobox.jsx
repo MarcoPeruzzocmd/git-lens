@@ -3,11 +3,11 @@ import { Command } from 'cmdk'
 import { GitBranch, Check, ChevronsUpDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
-function BranchCombobox({ value, onChange, options }) {
+function BranchCombobox({ value, onChange, options, disabled }) {
   const [open, setOpen] = useState(false)
   const [search, setSearch] = useState('')
 
-  const filtered = options.filter((o) =>
+  const filtered = (options || []).filter((o) =>
     o.toLowerCase().includes(search.toLowerCase())
   )
 
@@ -18,15 +18,19 @@ function BranchCombobox({ value, onChange, options }) {
   }
 
   return (
-    <div className="relative shrink-0">
+    <div className={cn('relative shrink-0', disabled && 'cursor-not-allowed')}>
       {/* Trigger */}
       <button
         type="button"
-        onClick={() => setOpen((v) => !v)}
+        onClick={() => {
+          if (disabled) return
+          setOpen((v) => !v)
+        }}
         className={cn(
           'flex items-center gap-1.5 border border-border rounded-md px-2.5 py-1.5 text-sm transition-colors',
           'text-subtle hover:text-foreground hover:border-primary/60',
-          open && 'border-primary text-foreground'
+          open && 'border-primary text-foreground',
+          disabled && 'opacity-50 cursor-not-allowed '
         )}
       >
         <GitBranch size={13} />

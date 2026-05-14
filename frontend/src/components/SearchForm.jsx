@@ -19,21 +19,18 @@ function SearchForm({ onSubmit, loading }) {
 
   function handleSubmit(event) {
     event.preventDefault();
-    if (!url) {
-      return alert("url invalida");
-    }
+    if (!isValidUrl) return
     onSubmit(url, branch);
   }
 
 
   async function handlerUrlBlur() {
-    if (!url) return;
+    if (!url || !isValidUrl) return;
     try {
       const result = await getBranches(url);
       console.log("branches recebidas:", result);
       setBranches(result);
     } catch (e) {
-      console.error("erro");
     }
   }
 
